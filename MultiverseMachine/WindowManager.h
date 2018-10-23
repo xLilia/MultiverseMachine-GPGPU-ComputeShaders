@@ -1,7 +1,9 @@
 #pragma once
+#include <array>
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
 #include "RenderSpace.h"
+ 
 
 static class WindowManager
 {

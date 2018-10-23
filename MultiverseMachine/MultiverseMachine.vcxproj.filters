@@ -64,13 +64,13 @@
     <None Include="FragmentShader.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="CopyFShader.glsl">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
     <None Include="FragmentShader2.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
     <None Include="ComputeShader.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="DisplayShader.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
   </ItemGroup>

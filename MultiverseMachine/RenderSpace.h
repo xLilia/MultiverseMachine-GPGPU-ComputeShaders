@@ -10,67 +10,77 @@ public:
 		GLuint ID;
 		GLuint Length;
 		GLuint UnitSize;
-		void* dataRef;
 	};
 
-	struct TextureInput {
+	struct Texture {
 		int w = 1;
 		int h = 1;
-		std::string Name = "";
+		std::string Name;
 		GLuint ID;
 	};
 
 	struct TextureOutput {
-		TextureInput* TexObj;
-		std::string Name = "";
+		Texture* TexObj;
+		std::string Name;
 	};
 
-	RenderSpace();
-
-	TextureInput* createInputTexture(std::string InteractionName, bool LinkTex = true);
-	void LinkInputTexture(TextureInput* TexObj);
-	TextureOutput LinkOutputToTexture(std::string InteractionName, TextureInput* TexObj, bool LinkTex = true);
-	std::vector<GLuint> getOutputTextures();
+	struct Framebuffer {
+		GLuint ID;
+		TextureOutput* backTexture = new TextureOutput;
+		TextureOutput* frontTexture = new TextureOutput;
+		std::vector<Texture*>Textures;
+		std::vector<TextureOutput*>TextureOutputs;
+		std::vector<ComputeBlock*>SSBOs;
+		GLuint defaultComputeProgram;
+		GLuint defaultRenderProgram;
+		GLuint defaultDisplayProgram;
+		//GLuint depthStencilTex;
+		bool bFramebufferInitialized = false;
+		bool bHasFrontBackTex = false;
+	};
+	std::string IDname;
+	RenderSpace(std::string IDname);
+	void InitializeRenderSpaceFramebuffer();
+	std::vector<GLuint> getTextureOutputs();
+	Texture* GenerateTexture(std::string OutputName);
+	void SetBackFrontTextures(Texture * Back_TextureOut, Texture * Front_TextureIn);
+	void LinkInputTexture(Texture* TexObj);
+	void LinkOutputToTexture(std::string OutputName, Texture* TexObj);
+	void LinkComputeBlock(ComputeBlock* ComputeBlockObj);
+	void LinkShaderPrograms(GLuint RenderProgram = 0, GLuint DisplayProgram = 0, GLuint ComputeProgram = 0);
 	void ExecuteComputeStage();
-	void ExecuteStepStage();
+	void ExecuteRenderStage();
 	void ExecuteDisplayStage();
+	void SetTexturePixelDimention(GLuint xPos, GLuint yPos, GLuint xWidth, GLuint yHeight, GLuint pxpu = NULL);
+	void SetTexturePixelDimention(GLuint xPos, GLuint yPos, GLuint xWidth, GLuint yHeight, GLuint Xpxs, GLuint Ypxs);
+	void SetComputeGroups(GLuint Num_Groups_x = 1, GLuint Work_Group_Size_x = 1, GLuint Num_Groups_y = 1, GLuint Work_Group_Size_y = 1, GLuint Num_Groups_z = 1, GLuint Work_Group_Size_z = 1);
+	
+	
+	Framebuffer* RS_Framebuffer = new Framebuffer;
+	GLuint time = 0;
+	~RenderSpace();
 	template<typename T>
-	void createStorageBufferObject(GLuint Length, T* Data) {
-		ComputeBlock CB;
-		CB.ID = RenderAux::CreateShaderStorageBufferObject(Length, Data);
-		CB.Length = Length;
-		CB.UnitSize = sizeof(T);
-		CB.dataRef = Data;
-		ComputeData.push_back(CB);
+	ComputeBlock* createStorageBufferObject(GLuint Length, T* Data) {
+		ComputeBlock* CB = new ComputeBlock;
+		CB->ID = RenderAux::CreateShaderStorageBufferObject<T>(Length, Data);
+		CB->Length = Length;
+		CB->UnitSize = sizeof(T);
+		return CB;
 	}
+
+	//DEBUG
 	template<typename type>
 	void poke(float xPos, float yPos, float xIWidth, float yIHeight, float winWidth, float winHeight, type pixels[], GLenum GLFormat, GLenum GLType, GLuint TextureTarget) {
-		GLdouble Mx = RenderAux::GetMapValueOfAB(Xpxu, xWidth);
-		GLdouble My = RenderAux::GetMapValueOfAB(Ypxu, yHeight);
+		GLdouble Mx = RenderAux::MapValueOfAB(Xpxu, xWidth);
+		GLdouble My = RenderAux::MapValueOfAB(Ypxu, yHeight);
 		xPos = RenderAux::MapAToMapValue(xPos - this->xPos, Mx);
 		yPos = RenderAux::MapAToMapValue((winHeight - this->yPos) - yPos, My);
-		RenderAux::UseRenderProgram(defaultDisplayProgram);
-		RenderAux::BindTextureUnitToUniformName(TextureTarget, 0, defaultDisplayProgram, "_lastStep");
+		RenderAux::UseRenderProgram(RS_Framebuffer->defaultRenderProgram);
+		RenderAux::BindTextureUnitToUniformName(TextureTarget, 0, RS_Framebuffer->defaultRenderProgram, RS_Framebuffer->frontTexture->Name);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, xPos, yPos, xIWidth, yIHeight, GLFormat, GLType, pixels);
 		check_gl_error();
 	}
-	void InitializeFramebuffer();
-	void SetPixelDimentions(GLuint xPos, GLuint yPos, GLuint xWidth, GLuint yHeight, GLuint pxpu = NULL);
-	void SetPixelDimentions(GLuint xPos, GLuint yPos, GLuint xWidth, GLuint yHeight, GLuint Xpxs, GLuint Ypxs);
-	void SetComputeGroups(GLuint Num_Groups_x = 1, GLuint Work_Group_Size_x = 1, GLuint Num_Groups_y = 1, GLuint Work_Group_Size_y = 1, GLuint Num_Groups_z = 1, GLuint Work_Group_Size_z = 1);
-	TextureOutput backTex;
-	TextureOutput frontTex;
-	GLuint defaultComputeProgram;
-	GLuint defaultDisplayProgram;
-	GLuint defaultSwapProgram;
-	//GLuint depthStencilTex;
-	GLuint framebuffer;
-	std::vector<TextureInput*>InputTextures;
-	std::vector<TextureOutput>OutputTextures;
-	std::vector<ComputeBlock>ComputeData;
-	bool initiated = false;
-	GLuint time = 0;
-	~RenderSpace();
+
 private:
 	GLuint pxpu = 64; //pixel unit
 	GLuint xPos = 0;

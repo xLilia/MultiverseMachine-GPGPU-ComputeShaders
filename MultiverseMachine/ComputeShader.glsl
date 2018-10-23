@@ -3,46 +3,31 @@
 #extension GL_ARB_compute_variable_group_size : enable
 #extension GL_ARB_shader_storage_buffer_object : enable
 
-layout( local_size_variable ) in; 
-
-layout(rgba32f, binding = 0) uniform image2D out1;
-
-//ivec2 st =		ivec2(gl_GlobalInvocationID.xy);
-//ivec2 is =		imageSize(out1);
-//vec4 current =	imageLoad(out1, st);
-
-
-layout( std140, binding=0 ) buffer DATA
+layout( std140, binding=0 ) buffer DATA1
 {
-	vec4 pos[];
+	vec4 col1[];
 };
 
 
+layout( std140, binding=1 ) buffer DATA2
+{
+	vec4 col2[];
+};
+
+ 
+layout(rgba32f, binding = 0) uniform image2D out1;
+
+layout( local_size_variable ) in;
+
+uint gidx = gl_GlobalInvocationID.x;
+uint gidy = gl_GlobalInvocationID.y;
+
 void main(){
 
-	vec4 col = pos[gl_GlobalInvocationID.x];
-	imageStore(out1,ivec2(gl_GlobalInvocationID.x,gl_GlobalInvocationID.x),col);
-	//imageStore(out1,ivec2(gl_GlobalInvocationID.x,gl_GlobalInvocationID.x),vec4(1));
+	uint cord = (gidy*100)+gidx;
+	vec4 color = col1[cord] + col2[cord];
+	col2[cord]+=0.01;
+	imageStore(out1,ivec2(gidx,gidy),color);
+
 }
-
-
-//vec4 circle(vec2 pos, float radius){
-//	float c = distance(st, pos) / radius;
-//	return exp(1-vec4(c))-exp(1)/exp(1);
-//}
-//
-//vec4 adot(vec2 pos){
-//	float c = distance(st, pos) + 1;
-//	return exp(1-vec4(c))*exp(1);
-//}
-
-//vec4 fc = black;
-//
-//fc += circle(is/2+vec2(5,0),15)*red;
-//fc += circle(is/2+vec2(-5,0),5)*green;
-//fc += circle(is/2+vec2(0,5),5)*blue;
-//fc += adot(is/2+vec2(0,-5));
-//
-//imageStore(out1, st, fc);
-
 

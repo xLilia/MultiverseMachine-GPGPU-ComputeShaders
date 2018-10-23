@@ -47,7 +47,7 @@ public:
 	static void FPS_lock(int FPSlock);
 	static double FPS_counter(double Time);
 
-	static GLdouble GetMapValueOfAB(GLdouble A, GLdouble B);
+	static GLdouble MapValueOfAB(GLdouble A, GLdouble B);
 	template<typename T>
 	static T MapAToMapValue(T A, GLdouble Map) {
 		return A * Map;
@@ -59,12 +59,34 @@ public:
 		GLuint SSboID;
 		glCreateBuffers(1, &SSboID);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSboID);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(T) * N_Units, &package[0], GL_STATIC_DRAW);
-		//GLint bufMask = GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT;
-		//T* pk = (T*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, Nunits * sizeof(T),bufMask);
-		//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(T) * N_Units, /*&package[0]*/ NULL, GL_STATIC_DRAW);
+
+		GLint bufMask = GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT;
+		T* mappedSSBO = (T*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(T) * N_Units, bufMask);
+
+		for (int i = 0; i < N_Units; i++) {
+			mappedSSBO[i] = package[i];
+		}
+
+		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+		//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 		check_gl_error();
+		
 		return SSboID;
+	}
+
+	template<typename T>
+	static void FetchShaderStorageBufferObject(GLuint N_Units, GLuint Uindex, GLuint ssboID, T* mappedSSBO)
+	{
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboID);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, Uindex, ssboID);
+		GLint bufMask = GL_MAP_READ_BIT;
+		std::memcpy(mappedSSBO, (T*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(T) * N_Units, bufMask), sizeof(T) * N_Units);
+		check_gl_error();
+		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+		check_gl_error();
 	}
 
 	static void BindShaderStorageBufferObject(GLuint SSboID, GLuint N_Units, GLuint UnitSize, GLuint index);

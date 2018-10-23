@@ -75,8 +75,11 @@ bool RenderAux::CheckFramebufferStatus(GLuint Framebuffer) {
 		std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
 		return false;
 	}
-	check_gl_error();
-	return true;
+	else {
+		check_gl_error();
+		std::cout << "Framebuffer complete! " << fboStatus << std::endl;
+		return true;
+	}
 }
 
 void RenderAux::BindRenderTargetToFramebuffer(GLuint Framebuffer, GLuint TextureAtachment, GLuint DepthStencilAtachment)
@@ -154,11 +157,8 @@ void RenderAux::BindTextureUnitToUniformName(GLuint TexID, GLuint TexUnit, GLuin
 {
 	bool c2 = false;
 	glActiveTexture(GL_TEXTURE0 + TexUnit);
-	c2 = check_gl_error();
 	glBindTexture(GL_TEXTURE_2D, TexID);
-	c2 = check_gl_error();
 	glUniform1i(glGetUniformLocation(ProgramID, UniformName.c_str()), TexUnit);
-	c2 = check_gl_error();
 	
 }
 
@@ -206,6 +206,8 @@ void RenderAux::PrintComputeWorkGroupStats() {
 	glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &work_grp_inv);
 	
 	printf("max local work group invocations %i\n", work_grp_inv);
+
+	check_gl_error();
 	
 }
 
@@ -231,7 +233,7 @@ void RenderAux::SwapTexIDs(GLuint & Tex_A, GLuint & Tex_B)
 	Tex_B = aux;
 }
 
-GLdouble RenderAux::GetMapValueOfAB(GLdouble A, GLdouble B)
+GLdouble RenderAux::MapValueOfAB(GLdouble A, GLdouble B)
 {
 	GLdouble r = A / B;
 	return r;
