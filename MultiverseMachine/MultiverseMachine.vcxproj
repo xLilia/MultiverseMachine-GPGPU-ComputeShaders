@@ -22,32 +22,32 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{A78846C9-99E1-47FE-B447-56637879579F}</ProjectGuid>
     <RootNamespace>MultiverseMachine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -74,8 +74,12 @@
     <LibraryPath>X:\NewHDD\Games\GAME DEVELOPMENT\C++\CelularAutomata\Projects\experiment2 - Multiverse Machine\Libs\glfw-3.2.1.bin.WIN32\lib-vc2015;X:\NewHDD\Games\GAME DEVELOPMENT\C++\CelularAutomata\Projects\experiment2 - Multiverse Machine\Libs\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>X:\NewHDD\Games\GAME DEVELOPMENT\C++\CelularAutomata\Projects\experiment2 - Multiverse Machine\Libs\glfw-3.2.1.bin.WIN32\include;X:\NewHDD\Games\GAME DEVELOPMENT\C++\CelularAutomata\Projects\experiment2 - Multiverse Machine\Libs\glew-2.1.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>X:\NewHDD\Games\GAME DEVELOPMENT\C++\CelularAutomata\Projects\experiment2 - Multiverse Machine\Libs\glfw-3.2.1.bin.WIN32\lib-vc2015;X:\NewHDD\Games\GAME DEVELOPMENT\C++\CelularAutomata\Projects\experiment2 - Multiverse Machine\Libs\glew-2.1.0\lib\Release\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Development\C++\LIBS\glm-0.9.9.6\glm;D:\Development\C++\LIBS\glfw-3.3.bin.WIN64\include;D:\Development\C++\LIBS\glew-2.1.0-win32\glew-2.1.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Development\C++\LIBS\glfw-3.3.bin.WIN64\lib-vc2019;D:\Development\C++\LIBS\glew-2.1.0-win32\glew-2.1.0\lib\Release\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>D:\Development\C++\LIBS\glew-2.1.0-win32\glew-2.1.0\include;D:\Development\C++\LIBS\glfw-3.3.bin.WIN64\include;D:\Development\C++\LIBS\glm-0.9.9.6\glm;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Development\C++\LIBS\glew-2.1.0-win32\glew-2.1.0\lib\Release\x64;D:\Development\C++\LIBS\glfw-3.3.bin.WIN64\lib-vc2019;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -130,12 +134,14 @@
   <ItemGroup>
     <ClCompile Include="GLError.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="WindowManager.cpp" />
     <ClCompile Include="RenderAux.cpp" />
     <ClCompile Include="ShaderWizard.cpp" />
     <ClCompile Include="RenderSpace.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EntityManager.h" />
     <ClInclude Include="UniversalValues.hpp" />
     <ClInclude Include="GLError.h" />
     <ClInclude Include="WindowManager.h" />

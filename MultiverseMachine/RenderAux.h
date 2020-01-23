@@ -5,6 +5,7 @@
 #include <thread>
 #include <string>
 #include "GLError.h" 
+#include <vector>
 
 static class RenderAux
 {
@@ -12,7 +13,7 @@ public:
 	RenderAux();
 	~RenderAux();
 
-	struct ScreenQuad {
+	static struct ScreenQuad {
 		GLfloat fullquad_v[8] =
 		{
 			-1,-1,
@@ -27,9 +28,59 @@ public:
 		};
 	};
 
+	static struct RenderQuadProperties {
+		GLuint pxpu = 64; //pixel unit
+		GLuint xPos = 0;
+		GLuint yPos = 0;
+		GLuint xWidth = 512;
+		GLuint yHeight = 256;
+		GLuint Xpxu = 64; //pixels per Xunit
+		GLuint Ypxu = 32; //pixels per Yunit
+	};
+
+	static struct ComputeBlock {
+		GLuint ID;
+		GLuint Length;
+		GLuint UnitSize;
+	};
+
+	static struct Texture {
+		int w = 1;
+		int h = 1;
+		std::string Name = "";
+		GLuint ID = 0;
+	};
+
+	static struct TextureOutput {
+		Texture* TexObj;
+		std::string Name;
+	};
+
+	static struct Framebuffer {
+		GLuint ID;
+		TextureOutput* backTexture = new TextureOutput;
+		TextureOutput* frontTexture = new TextureOutput;
+		std::vector<RenderAux::Texture*>Textures;
+		std::vector<RenderAux::TextureOutput*>TextureOutputs;
+		std::vector<RenderAux::ComputeBlock*>SSBOs;
+		GLuint defaultComputeProgram;
+		GLuint defaultRenderProgram;
+		GLuint defaultDisplayProgram;
+		//GLuint depthStencilTex;
+		bool bFramebufferInitialized = false;
+		bool bHasFrontBackTex = false;
+		bool bSkipDrawCall = false;
+		bool bSkipcomputeCall = false;
+	};
+
+	static struct Create {
+
+	};
+
 	static void RenderQuad(GLfloat x, GLfloat y, GLfloat w, GLfloat h, bool removeProgramAferUse = true, GLuint Shader = 0);
 	static GLuint CreateTexture2D(GLfloat w, GLfloat h);
 	static GLuint CreateFramebuffer();
+	static RenderAux::Texture* GenerateTexture(std::string TextureOutputName, GLfloat Xpxu, GLfloat Ypxu);
 	static void BindRenderTargetToFramebuffer(GLuint Framebuffer, GLuint TextureAtachment, GLuint DepthStencilAtachment = NULL);
 	static void BindMultipleRenderTargetsToFramebuffer(GLuint Framebuffer, GLuint * ColorAtachments, GLuint nRenderTargets, GLuint DepthStencilAtachment = NULL);
 	static void PrepareFramebufferForMultipleRenderTargets(GLuint Framebuffer, GLuint nRenderTargets);
@@ -46,8 +97,8 @@ public:
 	static void SwapTexIDs(GLuint &Tex_A, GLuint &Tex_B);
 	static void FPS_lock(int FPSlock);
 	static double FPS_counter(double Time);
-
 	static GLdouble MapValueOfAB(GLdouble A, GLdouble B);
+	
 	template<typename T>
 	static T MapAToMapValue(T A, GLdouble Map) {
 		return A * Map;
@@ -74,6 +125,15 @@ public:
 		check_gl_error();
 		
 		return SSboID;
+	}
+
+	template<typename T>
+	static ComputeBlock* CreateComputeSSBO(GLuint Length, T* Data) {
+		ComputeBlock* CB = new ComputeBlock;
+		CB->ID = RenderAux::CreateShaderStorageBufferObject<T>(Length, Data);
+		CB->Length = Length;
+		CB->UnitSize = sizeof(T);
+		return CB;
 	}
 
 	template<typename T>

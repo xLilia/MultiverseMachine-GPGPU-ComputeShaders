@@ -4,7 +4,7 @@ std::string ShaderWizard::readShaderCode(const char * filename) {
 	std::ifstream Input(filename);
 	if (!Input.good()) {
 		std::cout << " FailedToLoad: " << filename << std::endl;
-		return NULL;
+		return "FailedToLoad";
 		Input.close();
 	}
 	return std::string(

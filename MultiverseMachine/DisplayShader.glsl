@@ -7,6 +7,6 @@ out vec4 _defaultOutput;
 
 void main(){
 
-	_defaultOutput = texture2D(_LastFrame,tex_coord);
+	_defaultOutput = texture2D(_LastFrame,tex_coord); //CopyLastFrame
 
 }

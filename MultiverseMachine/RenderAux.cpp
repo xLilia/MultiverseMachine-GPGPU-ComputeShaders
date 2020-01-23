@@ -1,10 +1,10 @@
 #include "RenderAux.h"
 
-RenderAux::RenderAux()
+RenderAux::RenderAux::RenderAux()
 {
 }
 
-void RenderAux::RenderQuad(GLfloat x, GLfloat y, GLfloat w, GLfloat h, bool removeProgramAferUse, GLuint Shader) {
+void RenderAux::RenderAux::RenderQuad(GLfloat x, GLfloat y, GLfloat w, GLfloat h, bool removeProgramAferUse, GLuint Shader) {
 	if (Shader != 0)
 		glUseProgram(Shader);
 	glViewport(x, y, w, h);
@@ -67,17 +67,27 @@ GLuint RenderAux::CreateFramebuffer()
 	return FramebufferID;
 }
 
+RenderAux::Texture* RenderAux::GenerateTexture(std::string TextureOutputName, GLfloat Xpxu, GLfloat Ypxu)
+{
+	RenderAux::Texture* TexObj = new RenderAux::Texture;
+	TexObj->ID = RenderAux::CreateTexture2D(Xpxu, Ypxu);
+	TexObj->w = Xpxu;
+	TexObj->h = Ypxu;
+	TexObj->Name = TextureOutputName;
+	return TexObj;
+}
+
 bool RenderAux::CheckFramebufferStatus(GLuint Framebuffer) {
 	BindFramebuffer(Framebuffer);
 	GLuint fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
 		check_gl_error();
-		std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
+		std::cout << "Framebuffer not complete. Status: " << fboStatus << std::endl;
 		return false;
 	}
 	else {
 		check_gl_error();
-		std::cout << "Framebuffer complete! " << fboStatus << std::endl;
+		std::cout << "Framebuffer complete! Status:" << fboStatus << std::endl;
 		return true;
 	}
 }
@@ -241,7 +251,7 @@ GLdouble RenderAux::MapValueOfAB(GLdouble A, GLdouble B)
 
 void RenderAux::BindShaderStorageBufferObject(GLuint SSboID, GLuint N_Units, GLuint UnitSize, GLuint index)
 {
-	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, index, SSboID, 0, UnitSize * N_Units);
+	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, index, SSboID, 0, (GLsizeiptr)(UnitSize) * (GLsizeiptr)(N_Units));
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, SSboID);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 	check_gl_error();

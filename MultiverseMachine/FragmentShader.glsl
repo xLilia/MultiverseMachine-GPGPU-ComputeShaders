@@ -6,10 +6,10 @@ uniform vec2 _oneDivPxpu;
 uniform unsigned int _t;
 
 in vec2 tex_coord;
-
+out vec4 _defaultOutput;
 
 vec4 get(vec2 Offset){
-	return texture2D(_LastFrame,tex_coord + Offset*1/100);
+	return texture2D(_LastFrame,tex_coord + Offset*_oneDivPxpu);
 }
 
 vec4 getT(vec2 Offset, sampler2D TexC){
@@ -36,19 +36,25 @@ vec4 blue =		vec4(0,0,1,1);
 
 //CUSTOM
 
-uniform sampler2D in1;
-out vec4 out1;
-out vec4 _defaultOutput;
+uniform sampler2D in_ParticleDataView;
 
 void main(){
 	
-	//Rules
+	_defaultOutput = getT(vec2(0,0),in_ParticleDataView); //Display Compute Texture
+	
+}
 
-	_defaultOutput = getT(vec2(0,0),in1); //current//vec4(sin(_t));
-
-
-	//if(float(current) != 0){
+	//if(current == white && float(sum) < 2){
+	//	_defaultOutput = black;
+	//}
+	//if(current == white && float(sum) == 2 || float(sum) == 3){
 	//	_defaultOutput = current;
+	//}
+	//if(current == white && float(sum) > 3){
+	//	_defaultOutput = black;
+	//}
+	//if(current == black && float(sum) == 3){
+	//	_defaultOutput = white;
 	//}
 
 	//if(float(sum) == 0){
@@ -66,15 +72,6 @@ void main(){
 	//if(current.r == red.r){
 	//	_defaultOutput = red;
 	//}
-
-	
-
-
-
-
-	
-	
-}
 
 	//_outColor = vec4(fract(sin(_t)));
 	//_outColor = vec4(0,0,1,1);
